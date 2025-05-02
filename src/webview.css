@@ -1,7 +1,7 @@
 .container {
 	background-color: var(--joplin-background-color);
 	color: var(--joplin-color);
-	font-size: var(--joplin-font-size);
+	font-size: 12pt;
 	font-family: var(--joplin-font-family);
 }
 
@@ -11,7 +11,7 @@
 }
 
 .scrollable-div {
-    height: 100vh; /* Takes up full viewport height */
+    height: 98vh; /* Takes up full viewport height */
     width: 100%; /* Full width of the parent container */
     overflow-y: auto; /* Enables vertical scrolling if needed */
     overflow-x: hidden; /* Prevents horizontal scrolling */

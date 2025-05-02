@@ -12,8 +12,8 @@ function escapeHtml(unsafe: string) {
 }
 
 function formatNumber(num: number, length: number = 2) {
-    return String(num).padStart(length, '0');
-  }
+  return String(num).padStart(length, "0");
+}
 
 joplin.plugins.register({
   onStart: async function () {
@@ -40,7 +40,16 @@ joplin.plugins.register({
 
         for (const ref of references) {
           const verseTexts = getVerseText(ref);
-          const url = `https://www.jw.org/finder?srcid=jwlshare&wtlocale=E&prefer=lang&bible=${formatNumber(ref.bookNumber??0,2)}${formatNumber(ref.chapter,3)}${formatNumber(ref.verses[0],3)}-${formatNumber(ref.bookNumber??0,2)}${formatNumber(ref.chapter,3)}${formatNumber(ref.verses.reverse()[0],3)}&pub=nwtsty`; 
+          const url = `https://www.jw.org/finder?srcid=jwlshare&wtlocale=E&prefer=lang&bible=${formatNumber(
+            ref.bookNumber ?? 0,
+            2
+          )}${formatNumber(ref.chapter, 3)}${formatNumber(
+            ref.verses[0],
+            3
+          )}-${formatNumber(ref.bookNumber ?? 0, 2)}${formatNumber(
+            ref.chapter,
+            3
+          )}${formatNumber(ref.verses.reverse()[0], 3)}&pub=nwtsty`;
           console.log(url);
           itemHtml.push(`
             <p class="toc-item">
@@ -48,11 +57,16 @@ joplin.plugins.register({
             </p>
         `);
 
+          var priorVerse = 0;
           for (const v of verseTexts) {
+            if (priorVerse!=0&&priorVerse + 1 !== v.verse) {
+              itemHtml.push(`<br/><br/>`);
+            }
             itemHtml.push(`
 
                   <span class="versespan"><b>${v.verse}</b> ${v.text} </span>
                 `);
+            var priorVerse = v.verse;
           }
         }
         await panels.setHtml(
