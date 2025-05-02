@@ -1,0 +1,22 @@
+.container {
+	background-color: var(--joplin-background-color);
+	color: var(--joplin-color);
+	font-size: var(--joplin-font-size);
+	font-family: var(--joplin-font-family);
+}
+
+.toc-item a {
+	color: var(--joplin-color);
+	text-decoration: none;
+}
+
+.scrollable-div {
+    height: 100vh; /* Takes up full viewport height */
+    width: 100%; /* Full width of the parent container */
+    overflow-y: auto; /* Enables vertical scrolling if needed */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    word-wrap: break-word; /* Ensures text wraps */
+    border: 1px solid black; /* Optional styling */
+    padding: 10px; /* Optional, adds spacing */
+  }
+  
