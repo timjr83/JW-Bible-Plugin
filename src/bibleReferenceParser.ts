@@ -17,14 +17,12 @@ export function findBibleReferencesInText(text: string): BibleReference[] {
     const normalisedBook = bibleBookMap[rawBook];
     if (!normalisedBook) continue;
     const bookNumber: number = bookNumberMap[normalisedBook] ?? 0;
+    const verseRange = parseVerseRange(verseStr);
 
     // Create a unique key combining the relevant properties. You can customize
     // this key string according to what makes an entry duplicate for your case.
-    const uniqueKey = `${
-      match[0]
-    }_${normalisedBook}_${bookNumber}_${chapterStr}_${verseStr}_${
-      match.index ?? 0
-    }`;
+    const uniqueKey = 
+    `${bookNumber}_${chapterStr}_${verseStr}_${verseRange.join('-')}`;
 
     // Check if the key has already been encountered
     if (!seenKeys.has(uniqueKey)) {
@@ -34,7 +32,7 @@ export function findBibleReferencesInText(text: string): BibleReference[] {
         book: normalisedBook,
         bookNumber: bookNumber,
         chapter: parseInt(chapterStr),
-        verses: parseVerseRange(verseStr),
+        verses: verseRange,
         verseStr: verseStr,
         index: match.index ?? 0,
       });

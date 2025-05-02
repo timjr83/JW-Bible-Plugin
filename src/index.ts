@@ -50,9 +50,8 @@ joplin.plugins.register({
 
           for (const v of verseTexts) {
             itemHtml.push(`
-                    <p class="toc-item">
-                        <b>${v.verse}</b> ${v.text}
-                    </p>
+
+                  <span class="versespan"><b>${v.verse}</b> ${v.text} </span>
                 `);
           }
         }

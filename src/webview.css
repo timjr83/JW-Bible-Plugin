@@ -19,4 +19,8 @@
     border: 1px solid black; /* Optional styling */
     padding: 10px; /* Optional, adds spacing */
   }
+
+.versespan {
+  white-space: pre-line;
+}
   
