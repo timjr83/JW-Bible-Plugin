@@ -32,4 +32,20 @@
     text-align: center;
     height: 50px;
 }
-  
+
+.table-container {
+    height: 200px; /* Set a fixed height for the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Optional border */
+}
+
+.fixed-header {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Ensure background isn't transparent */
+    height: 50px;
+}
+
+.scrollable-body tr {
+    height: auto; /* Allow content to define row height */
+}
