@@ -2,8 +2,7 @@ import { BibleReference } from "./types";
 import { parseVerseRange } from "./utils";
 import { bibleBookMap, bookNumberMap } from "./bibleBooks";
 
-const referencePattern =
-  /\b((?:[1-3]\s)?[A-Z][a-z]+(?:\s(?:[A-Z][a-z]+))?)\s(\d+):([\d,\-\s]+)\b/g;
+const referencePattern = /\b((?:[1-3]\s)?[A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s(\d+):(\d+(?:[,\-](?!\r?\n)\s?\d+)*)\b/g;
 
 export function findBibleReferencesInText(text: string): BibleReference[] {
   const matches = [...text.matchAll(referencePattern)];

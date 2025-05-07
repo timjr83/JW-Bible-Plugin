@@ -1,26 +1,35 @@
-.container {
-	background-color: var(--joplin-background-color);
-	color: var(--joplin-color);
-	font-size: 12pt;
-	font-family: var(--joplin-font-family);
-}
-
-.toc-item a {
-	color: var(--joplin-color);
-	text-decoration: none;
+.content-table {
+    height: 100vh;
+    overflow-y: hidden; 
+    overflow-x: hidden; /* Prevents horizontal scrolling */
 }
 
 .scrollable-div {
-    height: 98vh; /* Takes up full viewport height */
+    height: 100%; /* Takes up full viewport height */
     width: 100%; /* Full width of the parent container */
     overflow-y: auto; /* Enables vertical scrolling if needed */
     overflow-x: hidden; /* Prevents horizontal scrolling */
     word-wrap: break-word; /* Ensures text wraps */
-    border: 1px solid black; /* Optional styling */
-    padding: 10px; /* Optional, adds spacing */
   }
 
 .versespan {
-  white-space: pre-line;
+    white-space: pre-line;
+    font-size: 12pt;
+    font-family: var(--joplin-font-family);
+}
+
+.reference {
+    font-size: 14pt;
+    font-family: var(--joplin-font-family);
+
+}
+
+.header {
+    background-color: var(--joplin-background-color);
+    color: var(--joplin-color);
+    font-size: 16pt;
+    font-family: var(--joplin-font-family);
+    text-align: center;
+    height: 50px;
 }
   

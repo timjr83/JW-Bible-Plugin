@@ -14,5 +14,7 @@
 	"icons": {},
 	"promo_tile": {},
 	"permissions": ["workspace", "commands", "views", "contentScripts"],
-	"type": "module"
+    "type": "module",
+
+    "platforms": ["desktop", "mobile"]
 }

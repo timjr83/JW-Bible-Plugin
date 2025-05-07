@@ -35,3 +35,8 @@ export function findBibleReferencesInText(text: string): string {
         return `<a href="#" class="bible-reference" data-reference="${reference}">${reference}</a>`;
     });
 }
+
+export function insertVerseText(joplin: any, message: any){
+          joplin.commands.execute("insertText", message.book + message.chapter + message.verses);
+
+          }
