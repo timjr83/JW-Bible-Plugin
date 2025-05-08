@@ -1,51 +1,85 @@
-.content-table {
-    height: 100vh;
-    overflow-y: hidden; 
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-}
-
-.scrollable-div {
-    height: 100%; /* Takes up full viewport height */
-    width: 100%; /* Full width of the parent container */
-    overflow-y: auto; /* Enables vertical scrolling if needed */
-    overflow-x: hidden; /* Prevents horizontal scrolling */
-    word-wrap: break-word; /* Ensures text wraps */
+p {
+    margin: 0; /* Removes all margin */
+    text-indent: 10px;
   }
 
-.versespan {
-    white-space: pre-line;
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Prevents overflow outside the container */
+}
+
+.scrollable-body {
+    background-color: #1D1D1D;
+    flex: 1; /* Takes up remaining height */
+    overflow-y: auto; /* Enables vertical scrolling */
+    /*word-wrap: break-word; Ensures text wraps */
+    padding: 10px;
+}
+
+.scrollable-body .versespan {
     font-size: 12pt;
-    font-family: var(--joplin-font-family);
+    font-family: Roboto, sans-serif;
+    line-height: 1.5; /* Adjust line height for readability */
+    margin: 0; /* Remove default paragraph margins */
 }
 
-.reference {
+.scrollable-body .reference {
+    background-color: #000000;
     font-size: 14pt;
-    font-family: var(--joplin-font-family);
-
+    font-family: Roboto, sans-serif;
+    padding: 10px; /* Optional padding for better readability */
+    margin-bottom: 10px; /* Adds spacing between references */
 }
 
-.header {
-    background-color: var(--joplin-background-color);
-    color: var(--joplin-color);
-    font-size: 16pt;
-    font-family: var(--joplin-font-family);
-    text-align: center;
-    height: 50px;
+.card {
+    background-color: #2C2C2C;
+    border: 1px solid #444;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 10px;
+    color: #fff;
 }
 
-.table-container {
-    height: 200px; /* Set a fixed height for the container */
-    overflow-y: auto; /* Enable vertical scrolling */
-    border: 1px solid #ccc; /* Optional border */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14pt;
+    font-weight: bold;
 }
 
-.fixed-header {
-    position: sticky;
-    top: 0;
-    background-color: #fff; /* Ensure background isn't transparent */
-    height: 50px;
+.card-body {
+    margin-top: 10px;
+    font-size: 12pt;
+    font-family: Roboto, sans-serif;
 }
 
-.scrollable-body tr {
-    height: auto; /* Allow content to define row height */
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.share-icon {
+    background: url('./icons/share-icon.svg') no-repeat center center;
+    background-size: contain;
+}
+
+.insert-icon {
+    background: url('./icons/insert-icon.svg') no-repeat center center;
+    background-size: contain;
+}
+
+.bible-icon {
+    background: url('./icons/icon32.png') no-repeat center center;
+    background-size: contain;
 }

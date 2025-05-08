@@ -1,12 +1,16 @@
 document.addEventListener('click', event => {
-	const element = event.target;
-	if (element.className === 'inserttext') {
+	const target = event.target;
+	if (target.classList.contains('insert-icon')) {
+		const book = target.getAttribute("data-book");
+		const chapter = target.getAttribute("data-chapter");
+		const verses = target.getAttribute("data-verses");
+
 		webviewApi.postMessage({
 			name: 'inserttext',
-		    book: element.book,
-		    chapter: element.chapter,
-		    verses: element.verses,
+			book: book,
+			chapter: chapter,
+			verses: verses,
 		});
 	}
-})
+});
 

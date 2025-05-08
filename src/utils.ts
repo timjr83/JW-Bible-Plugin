@@ -40,3 +40,8 @@ export function insertVerseText(joplin: any, message: any){
           joplin.commands.execute("insertText", message.book + message.chapter + message.verses);
 
           }
+
+
+export function formatNumber(num: number, length: number = 2) {
+            return String(num).padStart(length, "0");
+          }
