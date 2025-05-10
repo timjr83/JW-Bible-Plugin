@@ -17,11 +17,19 @@ export function generateBibleReferencesHtml(references: any[]) {
       3
     )}${formatNumber(ref.verses.reverse()[0], 3)}&pub=nwtsty`;
 
+    ref.verses.reverse(); //Return to original order
+    
     itemHtml.push(`
         <div class="card">
             <div class="card-header">
-                <span class="scripture-title">${ref.book} ${ref.chapter}:${ref.verseStr}</span>
-                <span class="icon share-icon" data-url="${url}" title="Share"></span>
+                <div class="left-section">
+                    <span class="bible-icon" title="Bible Icon"></span>
+                    <span class="scripture-title">${ref.book} ${ref.chapter}:${ref.verseStr}</span>
+                </div>
+                <div class="right-section">
+                    <a href="${url}" target="_blank" class="icon share-icon" title="Share"></a>
+                    <span class="icon insert-icon" data-book="${ref.book}" data-chapter="${ref.chapter}" data-verses="${ref.verses.join(",")}" title="Insert Text"></span>
+                </div>
             </div>
             <div class="card-body">
         `);
@@ -46,7 +54,7 @@ export function generateBibleReferencesHtml(references: any[]) {
                 `);
       } else if (!v.text.startsWith("\r\n") && priorVerse == 0) {
         itemHtml.push(`
-                <span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
+                <p><span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
                 `);
       } else if (
         !v.text.startsWith("\r\n") &&
@@ -54,7 +62,7 @@ export function generateBibleReferencesHtml(references: any[]) {
         priorVerse != 0
       ) {
         itemHtml.push(`
-                <span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
+                </p><br/><p><span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
                 `);
       } else {
         itemHtml.push(`
@@ -68,9 +76,6 @@ export function generateBibleReferencesHtml(references: any[]) {
 
 
     itemHtml.push(`
-            </div>
-            <div class="card-footer">
-                <span class="icon insert-icon" data-book="${ref.book}" data-chapter="${ref.chapter}" data-verses="${ref.verses.join(",")}" title="Insert Text"></span>
             </div>
         </div>
         `);

@@ -1,5 +1,7 @@
 import joplin from "api";
+import { ToolbarButtonLocation } from 'api/types';
 import { analyseCurrentNote } from "./noteAnalyzer";
+import { getVerseText } from "./utils";
 
 joplin.plugins.register({
   onStart: async function () {
@@ -16,10 +18,25 @@ joplin.plugins.register({
 
         const book = message.book;
         const chapter = message.chapter;
-        const verses = message.verses;
+        const verses = message.verses.split(",").map((v: string) => parseInt(v.trim(), 10)); // Ensure verses is an array
         console.log(`Book: ${book}, Chapter: ${chapter}, Verses: ${verses}`);
+        let textToInsert = ``;
+        getVerseText({
+          book,
+          chapter,
+          verses: verses, // Convert to array of numbers
+          raw: `${book} ${chapter}:${verses}`,
+          bookNumber: 0, // Replace with actual logic to determine bookNumber
+          verseStr: verses,
+        }).forEach((v) => {
+          if (v.text.startsWith("\r\n")) {
+            textToInsert += `\r\n${v.verse} ${v.text.slice(2)} `;
+          } else {
+            textToInsert += `${v.verse} ${v.text} `;
+          }
+          textToInsert = `*${textToInsert.trim()}*`;
+        });
 
-        const textToInsert = `${book} ${chapter}:${verses}`;
         await joplin.commands.execute('insertText', textToInsert);
       }
     });
@@ -28,5 +45,18 @@ joplin.plugins.register({
     await joplin.workspace.onNoteSelectionChange(() =>
       analyseCurrentNote(view)
     );
+
+    await joplin.commands.register({
+			name: 'togglePanel',
+			label: 'Toggle Bible Reference Panel',
+			iconName: 'icon48',
+			execute: async () => {
+				const isVisible = await panels.visible(view);
+				await panels.show(view, !isVisible);
+			},
+		});
+
+		await joplin.views.toolbarButtons.create('togglePanel', 'togglePanel', ToolbarButtonLocation.NoteToolbar);
+
   },
 });

@@ -50,6 +50,18 @@ p {
     font-weight: bold;
 }
 
+.left-section {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust spacing between the icon and title */
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust spacing between the share and insert icons */
+}
+
 .card-body {
     margin-top: 10px;
     font-size: 12pt;
@@ -63,23 +75,28 @@ p {
 }
 
 .icon {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     display: inline-block;
     cursor: pointer;
+    margin: 10px 5px 5px 10px; /* Adjusted margin for better spacing */
 }
 
 .share-icon {
-    background: url('./icons/share-icon.svg') no-repeat center center;
+    background: url('./icons/share32.png') no-repeat center center;
     background-size: contain;
 }
 
 .insert-icon {
-    background: url('./icons/insert-icon.svg') no-repeat center center;
+    background: url('./icons/insert32.png') no-repeat center center;
     background-size: contain;
 }
 
 .bible-icon {
-    background: url('./icons/icon32.png') no-repeat center center;
+    width: 48px;
+    height: 48px;
+    display: inline-block;
+    background: url('./icons/icon48.png') no-repeat center center;
     background-size: contain;
+    margin: 10px 10px 10px 0px; /* Adjusted margin for better spacing */
 }
