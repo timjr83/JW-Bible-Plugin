@@ -1,14 +1,12 @@
 {
 	"compilerOptions": {
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
 		"outDir": "./dist/",
 		"module": "commonjs",
 		"target": "es2015",
 		"jsx": "react",
 		"allowJs": true,
 		"baseUrl": ".",
-		"strict": true,
-		"allowSyntheticDefaultImports": true
+		"resolveJsonModule": true,
+		"esModuleInterop": true
 	}
 }

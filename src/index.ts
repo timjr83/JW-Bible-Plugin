@@ -49,7 +49,7 @@ joplin.plugins.register({
     await joplin.commands.register({
 			name: 'togglePanel',
 			label: 'Toggle Bible Reference Panel',
-			iconName: 'icon48',
+			iconName: 'fas fa-book',
 			execute: async () => {
 				const isVisible = await panels.visible(view);
 				await panels.show(view, !isVisible);

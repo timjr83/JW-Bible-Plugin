@@ -2,7 +2,7 @@
 	"manifest_version": 1,
 	"id": "com.joplin.jwbible",
 	"app_min_version": "3.2",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"name": "JW Bible Plugin",
 	"description": "Links bible references to wol.jw.org",
 	"author": "Tim Johnson-Reynolds",
