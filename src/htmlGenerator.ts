@@ -27,8 +27,8 @@ export function generateBibleReferencesHtml(references: any[]) {
                     <span class="scripture-title">${ref.book} ${ref.chapter}:${ref.verseStr}</span>
                 </div>
                 <div class="right-section">
-                    <a href="${url}" target="_blank" class="icon share-icon" title="Share"></a>
-                    <span class="icon insert-icon" data-book="${ref.book}" data-chapter="${ref.chapter}" data-verses="${ref.verses.join(",")}" title="Insert Text"></span>
+                    <a href="${url}" target="_blank" class="icon share-icon" title="Open in JW Library"></a>
+                    <span class="icon insert-icon" data-book="${ref.book}" data-chapter="${ref.chapter}" data-verses="${ref.verses.join(",")}" title="Insert text to note"></span>
                 </div>
             </div>
             <div class="card-body">
@@ -81,8 +81,6 @@ export function generateBibleReferencesHtml(references: any[]) {
         `);
   }
   itemHtml.push(`</div>`);
-
-  console.log(itemHtml.join("\n"));
 
   return `
   <div class="container">

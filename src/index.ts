@@ -1,5 +1,5 @@
 import joplin from "api";
-import { ToolbarButtonLocation } from 'api/types';
+import { ToolbarButtonLocation } from "api/types";
 import { analyseCurrentNote } from "./noteAnalyzer";
 import { getVerseText } from "./utils";
 
@@ -18,7 +18,9 @@ joplin.plugins.register({
 
         const book = message.book;
         const chapter = message.chapter;
-        const verses = message.verses.split(",").map((v: string) => parseInt(v.trim(), 10)); // Ensure verses is an array
+        const verses = message.verses
+          .split(",")
+          .map((v: string) => parseInt(v.trim(), 10)); // Ensure verses is an array
         console.log(`Book: ${book}, Chapter: ${chapter}, Verses: ${verses}`);
         let textToInsert = ``;
         getVerseText({
@@ -37,26 +39,38 @@ joplin.plugins.register({
           textToInsert = `*${textToInsert.trim()}*`;
         });
 
-        await joplin.commands.execute('insertText', textToInsert);
+        await joplin.commands.execute("insertText", textToInsert);
       }
     });
 
-    await joplin.workspace.onNoteChange(() => analyseCurrentNote(view));
-    await joplin.workspace.onNoteSelectionChange(() =>
-      analyseCurrentNote(view)
-    );
+    await joplin.workspace.onNoteChange(async () => {
+      await analyseCurrentNote(view);
+      const selection = await joplin.commands.execute('editor.execCommand',{
+        name: 'getCursor',
+        args: ['to'],
+      });
+      console.log('Cursor',selection);
+
+    });
+
+    await joplin.workspace.onNoteSelectionChange(async () => {
+      await analyseCurrentNote(view);
+    });
 
     await joplin.commands.register({
-			name: 'togglePanel',
-			label: 'Toggle Bible Reference Panel',
-			iconName: 'fas fa-book',
-			execute: async () => {
-				const isVisible = await panels.visible(view);
-				await panels.show(view, !isVisible);
-			},
-		});
+      name: "togglePanel",
+      label: "Toggle Bible Reference Panel",
+      iconName: "fas fa-book",
+      execute: async () => {
+        const isVisible = await panels.visible(view);
+        await panels.show(view, !isVisible);
+      },
+    });
 
-		await joplin.views.toolbarButtons.create('togglePanel', 'togglePanel', ToolbarButtonLocation.NoteToolbar);
-
+    await joplin.views.toolbarButtons.create(
+      "togglePanel",
+      "togglePanel",
+      ToolbarButtonLocation.NoteToolbar
+    );
   },
 });

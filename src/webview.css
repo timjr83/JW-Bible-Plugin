@@ -70,8 +70,8 @@ p {
 
 
 .icon {
-    width: 32px;
-    height: 32px;
+    width: 22px;
+    height: 22px;
     display: inline-block;
     cursor: pointer;
     margin: 5px 5px 5px 5px; /* Adjusted margin for better spacing */
@@ -88,10 +88,10 @@ p {
 }
 
 .bible-icon {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     display: inline-block;
-    background: url('./icons/icon48.png') no-repeat center center;
+    background: url('./icons/icon32.png') no-repeat center center;
     background-size: contain;
     margin: 5px 10px 5px 0px; /* Adjusted margin for better spacing */
 }
