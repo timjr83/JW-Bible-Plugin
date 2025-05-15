@@ -1,7 +1,8 @@
 import joplin from "api";
-import { ToolbarButtonLocation } from "api/types";
+import { ToolbarButtonLocation, ContentScriptType } from "api/types";
 import { analyseCurrentNote } from "./noteAnalyzer";
 import { getVerseText } from "./utils";
+
 
 joplin.plugins.register({
   onStart: async function () {
@@ -45,12 +46,8 @@ joplin.plugins.register({
 
     await joplin.workspace.onNoteChange(async () => {
       await analyseCurrentNote(view);
-      const selection = await joplin.commands.execute('editor.execCommand',{
-        name: 'getCursor',
-        args: ['to'],
-      });
-      console.log('Cursor',selection);
-
+      const selection = await joplin.commands.execute('contentScripts.execCommand', 'get-cursor-text', []);
+      console.log("Cursor", selection);
     });
 
     await joplin.workspace.onNoteSelectionChange(async () => {
