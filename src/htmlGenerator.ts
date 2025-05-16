@@ -42,19 +42,19 @@ export function generateBibleReferencesHtml(references: any[]) {
         priorVerse != 0
       ) {
         itemHtml.push(`
-                </p><br/><p><span class="versespan"><b>${v.verse}</b> ${v.text.slice(2).replace("\r\n",'<br/>').trim()} </span>
+                </p><br/><p><span class="versespan"><b>${v.verse}</b> ${v.text.slice(2).replace(/\r\n/g, '<br/>').trim()} </span>
                 `);
       } else if (v.text.startsWith("\r\n") && priorVerse > 0) {
         itemHtml.push(`
-                </p><p><span class="versespan"><b>${v.verse}</b> ${v.text.slice(2).replace("\r\n",'<br/>').trim()} </span>
+                </p><p><span class="versespan"><b>${v.verse}</b> ${v.text.slice(2).replace(/\r\n/g, '<br/>').trim()} </span>
                 `);
       } else if (v.text.startsWith("\r\n") && priorVerse == 0) {
         itemHtml.push(`
-                <p><span class="versespan"><b>${v.verse}</b> ${v.text.slice(2).replace("\r\n",'<br/>').trim()} </span>
+                <p><span class="versespan"><b>${v.verse}</b> ${v.text.slice(2).replace(/\r\n/g, '<br/>').trim()} </span>
                 `);
       } else if (!v.text.startsWith("\r\n") && priorVerse == 0) {
         itemHtml.push(`
-                <p><span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
+                <p><span class="versespan"><b>${v.verse}</b> ${v.text.replace(/\r\n/g, '<br/>').trim()} </span>
                 `);
       } else if (
         !v.text.startsWith("\r\n") &&
@@ -62,11 +62,11 @@ export function generateBibleReferencesHtml(references: any[]) {
         priorVerse != 0
       ) {
         itemHtml.push(`
-                </p><br/><p><span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
+                </p><br/><p><span class="versespan"><b>${v.verse}</b> ${v.text.replace(/\r\n/g, '<br/>').trim()} </span>
                 `);
       } else {
         itemHtml.push(`
-                <span class="versespan"><b>${v.verse}</b> ${v.text.replace("\r\n",'<br/>').trim()} </span>
+                <span class="versespan"><b>${v.verse}</b> ${v.text.replace(/\r\n/g, '<br/>').trim()} </span>
                 `);
       }
       priorVerse = v.verse;
