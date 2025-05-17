@@ -3,8 +3,10 @@ import { getVerseText, formatNumber } from "./utils";
 export function generateBibleReferencesHtml(references: any[]) {
   const itemHtml = [];
   itemHtml.push(`<div class="cards-container">`);
+  console.log("references:", references);
 
   for (const ref of references) {
+    console.log("ref:", ref);
     const verseTexts = getVerseText(ref);
     const url = `https://www.jw.org/finder?srcid=jwlshare&wtlocale=E&prefer=lang&bible=${formatNumber(
       ref.bookNumber ?? 0,
