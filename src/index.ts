@@ -15,30 +15,29 @@ joplin.plugins.register({
 
     await panels.onMessage(view, async (message: any) => {
       if (message.name === "inserttext") {
-        console.log("message returned");
-
         const book = message.book;
         const chapter = message.chapter;
         const verses = message.verses
           .split(",")
           .map((v: string) => parseInt(v.trim(), 10)); // Ensure verses is an array
-        console.log(`Book: ${book}, Chapter: ${chapter}, Verses: ${verses}`);
-        let textToInsert = ``;
-        getVerseText({
+
+        // Build the text to insert using map and join for better performance
+        const verseTexts = getVerseText({
           book,
           chapter,
-          verses: verses, // Convert to array of numbers
+          verses,
           raw: `${book} ${chapter}:${verses}`,
           bookNumber: 0, // Replace with actual logic to determine bookNumber
           verseStr: verses,
-        }).forEach((v) => {
-          if (v.text.startsWith("\r\n")) {
-            textToInsert += `\r\n${v.verse} ${v.text.slice(2)} `;
-          } else {
-            textToInsert += `${v.verse} ${v.text} `;
-          }
-          textToInsert = `*${textToInsert.trim()}*`;
         });
+
+        const textToInsert = '*' + verseTexts.map(v => {
+          if (v.text.startsWith("\r\n")) {
+            return `\r\n${v.verse} ${v.text.slice(2)}`;
+          } else {
+            return `${v.verse} ${v.text}`;
+          }
+        }).join(' ').trim() + '*';
 
         await joplin.commands.execute("insertText", textToInsert);
       }
