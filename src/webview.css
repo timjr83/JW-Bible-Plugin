@@ -46,7 +46,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14pt;
+    font-size: 12pt;
     font-weight: bold;
 }
 
@@ -64,7 +64,7 @@ p {
 
 .card-body {
     margin-top: 10px;
-    font-size: 12pt;
+    font-size: 9pt;
     font-family: Roboto, sans-serif;
 }
 
