@@ -1,26 +1,28 @@
-function setScrollListeners() {
-	const container = document.querySelectorAll("#scrollContainer");
-	if( container.length > 0) {
-		console.log("Setting up scroll listeners for container");
-		container.forEach((el) => {
-			el.addEventListener("scroll", () => {
-				console.log("Scroll event detected in container");
-				webviewApi.postMessage({ name: "scrollPosition", value: el.scrollTop });
-			});
-		});
+function setScrollListener() {
+	const container = document.querySelector("#scrollContainer");
+	if (container) {
+		// Remove any existing scroll listener to prevent duplicates
+		container.removeEventListener("scroll", handleScroll);
+		container.addEventListener("scroll", handleScroll);
 		return true;
 	}
+	return false;
+}
+
+function handleScroll(event) {
+	const target = event.target;
+	webviewApi.postMessage({ name: "scrollPosition", value: target.scrollTop });
 }
 
 // Try to set up immediately
-if (!setScrollListeners()) {
+if (!setScrollListener()) {
 	// If not found, observe DOM changes until they appear
-	const scrollmo = new MutationObserver(() => {
-		if (setScrollListeners()) {
-			scrollmo.disconnect();
+	const mo = new MutationObserver(() => {
+		if (setScrollListener()) {
+			mo.disconnect();
 		}
 	});
-	scrollmo.observe(document.body, { childList: true, subtree: true });
+	mo.observe(document.body, { childList: true, subtree: true });
 }
 
 
@@ -40,17 +42,26 @@ document.addEventListener("click", (event) => {
 	}
 });
 
-if (window.webviewApi && window.webviewApi.onMessage) {
+if (window.webviewApi?.onMessage) {
 	window.webviewApi.onMessage(env => {
 		console.log("Received message from main process:", env);
-		if (env.message.name === "restoreScroll") {
-			const container = document.querySelector("#scrollContainer");
-			if (container) {
-				container.scrollTop = env.message.value || 0;
-			}
-		}
-		if (env.message.name === "setScrollListeners") {
-			setScrollListeners();
+
+		const { name, value } = env.message;
+
+		switch (name) {
+			case "restoreScroll":
+				const container = document.querySelector("#scrollContainer");
+				if (container) {
+					container.scrollTop = value ?? 0;
+				}
+				break;
+
+			case "setScrollListener":
+				setScrollListener();
+				break;
+
+			default:
+				console.warn(`Unhandled message name: ${name}`);
 		}
 	});
 }

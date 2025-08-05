@@ -1,5 +1,7 @@
-# Joplin Plugin
+This detects verse references in a note and displays the verse text in a side panel from the New World Translation Bible. There are also actions to insert the verse text into your note and to open the verse directly in jw.org or jw library.
 
-This is your new Joplin plugin. It is suggested that you use this README file to document your plugin.
+Simply enter a verse reference into the note and the verse will be added to the plugin panel. 
 
-For information on how to build or publish the plugin, please see [GENERATOR_DOC.md](./GENERATOR_DOC.md)
+Release notes:
+1.0.12: Code and performance improvements
+1.0.11: Adjusted the panel reload when new referenced are found to maintain the scroll position.

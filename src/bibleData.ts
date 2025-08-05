@@ -1,6 +1,6 @@
 import bibleRaw from './Bible.json';
 import { BibleJSON } from './types';
 
-const bible: BibleJSON = bibleRaw;
+const bible = bibleRaw as BibleJSON;
 
 export default bible;

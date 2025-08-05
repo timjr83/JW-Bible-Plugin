@@ -1,62 +1,71 @@
 import joplin from "api";
-import { ToolbarButtonLocation, ContentScriptType } from "api/types";
+import { ToolbarButtonLocation } from "api/types";
 import { analyseCurrentNote } from "./noteAnalyzer";
 import { getVerseText } from "./utils";
+import { bookNumberMap } from "./bibleBooks";
 
+type PanelMessage =
+  | { name: "inserttext"; book: string; chapter: number; verses: string }
+  | { name: "scrollPosition"; value: number };
+
+async function setupPanel(view: string, panels: typeof joplin.views.panels) {
+  await panels.setHtml(view, "Loading...");
+  await panels.addScript(view, "./webview.js");
+  await panels.addScript(view, "./webview.css");
+}
 
 joplin.plugins.register({
   onStart: async function () {
     const panels = joplin.views.panels;
-    const view = await panels.create("panel_1");
+    const view = await panels.create("JWBiblePanel");
 
-    await panels.setHtml(view, "Loading...");
-    await panels.addScript(view, "./webview.js");
-    await panels.addScript(view, "./webview.css");
+    await setupPanel(view, panels);
 
     let lastScroll = 0;
 
-    await panels.onMessage(view, async (message: any) => {
+    await panels.onMessage(view, async (message: PanelMessage) => {
       if (message.name === "inserttext") {
-        const book = message.book;
-        const chapter = message.chapter;
-        const verses = message.verses
+        const { book, chapter } = message;
+        const verses: number[] = message.verses
           .split(",")
-          .map((v: string) => parseInt(v.trim(), 10)); // Ensure verses is an array
+          .map((v: string) => parseInt(v.trim(), 10));
 
-        // Build the text to insert using map and join for better performance
         const verseTexts = getVerseText({
           book,
           chapter,
           verses,
           raw: `${book} ${chapter}:${verses}`,
-          bookNumber: 0, // Replace with actual logic to determine bookNumber
-          verseStr: verses,
+          bookNumber: bookNumberMap[book],
+          verseStr: message.verses,
         });
 
-        const textToInsert = '*' + verseTexts.map(v => {
-          if (v.text.startsWith("\r\n")) {
-            return `\r\n${v.verse} ${v.text.slice(2)}`;
-          } else {
-            return `${v.verse} ${v.text}`;
-          }
-        }).join(' ').trim() + '*';
+        const textToInsert =
+          "*" +
+          verseTexts
+            .map((v) =>
+              v.text.startsWith("\r\n")
+                ? `\r\n${v.verse} ${v.text.slice(2)}`
+                : `${v.verse} ${v.text}`
+            )
+            .join(" ")
+            .trim() +
+          "*";
 
         await joplin.commands.execute("insertText", textToInsert);
       } else if (message.name === "scrollPosition") {
-        console.log("Scroll position received:", message);
         lastScroll = message.value;
-
       }
     });
 
-
-    await joplin.workspace.onNoteChange(async () => {
+    async function refreshPanelAndRestoreScroll() {
       await analyseCurrentNote(view);
-      await panels.postMessage(view, { name: "restoreScroll", value: lastScroll });
-      await panels.postMessage(view, { name: "setScrollListeners" });
-      // Restore scroll position after HTML is set
-      
-    });
+        await panels.postMessage(view, {
+          name: "restoreScroll",
+          value: lastScroll,
+        });
+    }
+
+    await joplin.workspace.onNoteChange(refreshPanelAndRestoreScroll);
 
     await joplin.workspace.onNoteSelectionChange(async () => {
       await analyseCurrentNote(view);
