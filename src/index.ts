@@ -13,6 +13,8 @@ joplin.plugins.register({
     await panels.addScript(view, "./webview.js");
     await panels.addScript(view, "./webview.css");
 
+    let lastScroll = 0;
+
     await panels.onMessage(view, async (message: any) => {
       if (message.name === "inserttext") {
         const book = message.book;
@@ -40,13 +42,20 @@ joplin.plugins.register({
         }).join(' ').trim() + '*';
 
         await joplin.commands.execute("insertText", textToInsert);
+      } else if (message.name === "scrollPosition") {
+        console.log("Scroll position received:", message);
+        lastScroll = message.value;
+
       }
     });
 
+
     await joplin.workspace.onNoteChange(async () => {
       await analyseCurrentNote(view);
-      const selection = await joplin.commands.execute('contentScripts.execCommand', 'get-cursor-text', []);
-      console.log("Cursor", selection);
+      await panels.postMessage(view, { name: "restoreScroll", value: lastScroll });
+      await panels.postMessage(view, { name: "setScrollListeners" });
+      // Restore scroll position after HTML is set
+      
     });
 
     await joplin.workspace.onNoteSelectionChange(async () => {
