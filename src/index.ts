@@ -3,6 +3,7 @@ import { ToolbarButtonLocation } from "api/types";
 import { analyseCurrentNote } from "./noteAnalyzer";
 import { getVerseText } from "./utils";
 import { bookNumberMap } from "./bibleBooks";
+import { ContentScriptType } from "api/types";
 
 type PanelMessage =
   | { name: "inserttext"; book: string; chapter: number; verses: string }
@@ -18,6 +19,13 @@ joplin.plugins.register({
   onStart: async function () {
     const panels = joplin.views.panels;
     const view = await panels.create("JWBiblePanel");
+
+    const contentScriptId = "jw-bible-plugin-content-id";
+    joplin.contentScripts.register(
+      ContentScriptType.CodeMirrorPlugin,
+      contentScriptId,
+      "./contentScript.js"
+    );
 
     await setupPanel(view, panels);
 
@@ -59,17 +67,22 @@ joplin.plugins.register({
 
     async function refreshPanelAndRestoreScroll() {
       await analyseCurrentNote(view);
-        await panels.postMessage(view, {
-          name: "restoreScroll",
-          value: lastScroll,
-        });
+      await panels.postMessage(view, {
+        name: "restoreScroll",
+        value: lastScroll,
+      });
+    }
+
+    async function refreshPanel() {
+      await analyseCurrentNote(view);
+      await panels.postMessage(view, {
+        name: "setScrollListener"
+      });
     }
 
     await joplin.workspace.onNoteChange(refreshPanelAndRestoreScroll);
 
-    await joplin.workspace.onNoteSelectionChange(async () => {
-      await analyseCurrentNote(view);
-    });
+    await joplin.workspace.onNoteSelectionChange(refreshPanel);
 
     await joplin.commands.register({
       name: "togglePanel",
