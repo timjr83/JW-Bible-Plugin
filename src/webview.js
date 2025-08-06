@@ -1,4 +1,7 @@
+initializeScrollListener();
+
 function setScrollListener() {
+	console.log("Setting up scroll listener");
 	const container = document.querySelector("#scrollContainer");
 	if (container) {
 		// Remove any existing scroll listener to prevent duplicates
@@ -11,20 +14,23 @@ function setScrollListener() {
 
 function handleScroll(event) {
 	const target = event.target;
+	console.log("Scroll event detected:", target.scrollTop);
 	webviewApi.postMessage({ name: "scrollPosition", value: target.scrollTop });
 }
 
 // Try to set up immediately
-if (!setScrollListener()) {
-	// If not found, observe DOM changes until they appear
-	const mo = new MutationObserver(() => {
-		if (setScrollListener()) {
-			mo.disconnect();
-		}
-	});
-	mo.observe(document.body, { childList: true, subtree: true });
+function initializeScrollListener() {
+	console.log("Initializing scroll listener");
+	if (!setScrollListener()) {
+		// If not found, observe DOM changes until they appear
+		const mo = new MutationObserver(() => {
+			if (setScrollListener()) {
+				mo.disconnect();
+			}
+		});
+		mo.observe(document.body, { childList: true, subtree: true });
+	}
 }
-
 
 document.addEventListener("click", (event) => {
 	const target = event.target;
@@ -57,7 +63,8 @@ if (window.webviewApi?.onMessage) {
 				break;
 
 			case "setScrollListener":
-				setScrollListener();
+				console.log("Setting up scroll listener");
+				initializeScrollListener();
 				break;
 
 			default:
