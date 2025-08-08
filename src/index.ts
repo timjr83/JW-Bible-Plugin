@@ -27,10 +27,9 @@ joplin.plugins.register({
       "./contentScript.js"
     );
 
-    await setupPanel(view, panels);
-
     let lastScroll = 0;
 
+    // Register the message handler BEFORE loading scripts
     await panels.onMessage(view, async (message: PanelMessage) => {
       if (message.name === "inserttext") {
         const { book, chapter } = message;
@@ -65,7 +64,13 @@ joplin.plugins.register({
       }
     });
 
+    await setupPanel(view, panels);
+
     async function refreshPanelAndRestoreScroll() {
+      await panels.postMessage(view, {
+        name: "getScrollPosition",
+      });
+
       await analyseCurrentNote(view);
       await panels.postMessage(view, {
         name: "restoreScroll",
@@ -75,9 +80,6 @@ joplin.plugins.register({
 
     async function refreshPanel() {
       await analyseCurrentNote(view);
-      await panels.postMessage(view, {
-        name: "setScrollListener"
-      });
     }
 
     await joplin.workspace.onNoteChange(refreshPanelAndRestoreScroll);

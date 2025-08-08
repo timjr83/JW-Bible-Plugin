@@ -3,6 +3,7 @@ This detects verse references in a note and displays the verse text in a side pa
 Simply enter a verse reference into the note and the verse will be added to the plugin panel. 
 
 Release notes:
+1.0.15: Resolving bugs with scroll restore when resize web panel, improving parsing of bible references, reducing of setting the scroll postion to improve performance
 1.0.13/14: Fixed issue with scroll position not being tracked when user switched to a different note.
 1.0.12: Code and performance improvements
 1.0.11: Adjusted the panel reload when new referenced are found to maintain the scroll position.
