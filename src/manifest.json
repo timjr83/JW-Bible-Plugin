@@ -6,7 +6,7 @@
   "name": "JW Bible Plugin",
   "description": "This detects verse references in a note and displays the verse text in a side panel from the New World Translation Bible. There are also actions to insert the verse text into your note and to open the verse directly in jw.org or jw library.",
   "author": "Tim Johnson-Reynolds",
-  "homepage_url": "",
+  "homepage_url": "https://discourse.joplinapp.org/t/jw-bible-plugin/47291",
   "repository_url": "https://github.com/timjr83/JW-Bible-Plugin",
   "keywords": ["Bible", "NWT", "Jehovah's Witnesses", "New World Translation"],
   "categories": [],
