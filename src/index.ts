@@ -1,9 +1,10 @@
 import joplin from "api";
-import { ToolbarButtonLocation } from "api/types";
+import { ToolbarButtonLocation, ContentScriptType } from "api/types";
 import { analyseCurrentNote } from "./noteAnalyzer";
 import { getVerseText } from "./utils";
 import { bookNumberMap } from "./bibleBooks";
-import { ContentScriptType } from "api/types";
+import { registerSettings, getSelectedLanguage } from "./settings";
+import { SupportedLang } from "./types";
 
 type PanelMessage =
   | { name: "inserttext"; book: string; chapter: number; verses: string }
@@ -17,6 +18,10 @@ async function setupPanel(view: string, panels: typeof joplin.views.panels) {
 
 joplin.plugins.register({
   onStart: async function () {
+    // 1. Register settings
+    await registerSettings();
+    console.log("loading plugin,");
+
     const panels = joplin.views.panels;
     const view = await panels.create("JWBiblePanel");
 
@@ -29,7 +34,7 @@ joplin.plugins.register({
 
     let lastScroll = 0;
 
-    // Register the message handler BEFORE loading scripts
+    // 2. Handle panel messages
     await panels.onMessage(view, async (message: PanelMessage) => {
       if (message.name === "inserttext") {
         const { book, chapter } = message;
@@ -37,14 +42,23 @@ joplin.plugins.register({
           .split(",")
           .map((v: string) => parseInt(v.trim(), 10));
 
-        const verseTexts = getVerseText({
-          book,
-          chapter,
-          verses,
-          raw: `${book} ${chapter}:${verses}`,
-          bookNumber: bookNumberMap[book],
-          verseStr: message.verses,
-        });
+        // Get language from settings
+        const language: SupportedLang = await getSelectedLanguage();
+        console.log("language: " + language);
+        const bnMap = bookNumberMap(language);
+        console.log("Bookmap", bnMap);
+
+        const verseTexts = getVerseText(
+          {
+            book,
+            chapter,
+            verses,
+            raw: `${book} ${chapter}:${verses}`,
+            bookNumber: bnMap[book],
+            verseStr: message.verses,
+          },
+          language
+        );
 
         const textToInsert =
           "*" +
@@ -67,11 +81,9 @@ joplin.plugins.register({
     await setupPanel(view, panels);
 
     async function refreshPanelAndRestoreScroll() {
-      await panels.postMessage(view, {
-        name: "getScrollPosition",
-      });
-
-      await analyseCurrentNote(view);
+      await panels.postMessage(view, { name: "getScrollPosition" });
+      const language: SupportedLang = await getSelectedLanguage();
+      await analyseCurrentNote(view, language);
       await panels.postMessage(view, {
         name: "restoreScroll",
         value: lastScroll,
@@ -79,12 +91,22 @@ joplin.plugins.register({
     }
 
     async function refreshPanel() {
-      await analyseCurrentNote(view);
+      const language: SupportedLang = await getSelectedLanguage();
+      await analyseCurrentNote(view, language);
     }
 
     await joplin.workspace.onNoteChange(refreshPanelAndRestoreScroll);
-
     await joplin.workspace.onNoteSelectionChange(refreshPanel);
+
+    await joplin.settings.onChange(async (event) => {
+      if (event.keys.includes("jwBiblePlugin.language")) {
+        const lang = await getSelectedLanguage();
+        console.log("Language changed to:", lang);
+
+        // Re-run your parsing logic here
+        await analyseCurrentNote(view, lang);
+      }
+    });
 
     await joplin.commands.register({
       name: "togglePanel",

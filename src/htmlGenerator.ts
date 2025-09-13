@@ -1,15 +1,19 @@
 import { getVerseText, formatNumber } from "./utils";
+import { SupportedLang } from "./types";
 
 function replaceNewlines(text: string) {
   return text.replace(/\r\n/g, "<br/>").trim();
 }
 
-export function generateBibleReferencesHtml(references: any[]) {
+export function generateBibleReferencesHtml(
+  references: any[],
+  language: SupportedLang
+) {
   const itemHtml: string[] = [];
   itemHtml.push(`<div class="cards-container">`);
 
   for (const ref of references) {
-    const verseTexts = getVerseText(ref);
+    const verseTexts = getVerseText(ref, language);
 
     // Avoid mutating ref.verses by using a temporary reversed array
     const reversedVerses = [...ref.verses].reverse();
@@ -86,6 +90,6 @@ export function generateBibleReferencesHtml(references: any[]) {
     `  <div id="scrollContainer" class="scrollable-body">`,
     itemHtml.join("\n"),
     `  </div>`,
-    `</div>`
+    `</div>`,
   ].join("\n");
 }
