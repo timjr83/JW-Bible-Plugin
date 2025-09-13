@@ -57,3 +57,8 @@ export function insertVerseText(joplin: any, message: any) {
 export function formatNumber(num: number, length: number = 2) {
   return String(num).padStart(length, "0");
 }
+
+export const localeMap: Record<string, string> = {
+  en: "E",
+  no: "N",
+};

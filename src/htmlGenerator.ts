@@ -1,4 +1,4 @@
-import { getVerseText, formatNumber } from "./utils";
+import { getVerseText, formatNumber, localeMap } from "./utils";
 import { SupportedLang } from "./types";
 
 function replaceNewlines(text: string) {
@@ -17,16 +17,18 @@ export function generateBibleReferencesHtml(
 
     // Avoid mutating ref.verses by using a temporary reversed array
     const reversedVerses = [...ref.verses].reverse();
-    const url = `https://www.jw.org/finder?srcid=jwlshare&wtlocale=E&prefer=lang&bible=${formatNumber(
+    const url = `https://www.jw.org/finder?srcid=jwlshare&wtlocale=${
+      localeMap[language]
+    }&prefer=lang&bible=${formatNumber(ref.bookNumber ?? 0, 2)}${formatNumber(
+      ref.chapter,
+      3
+    )}${formatNumber(ref.verses[0], 3)}-${formatNumber(
       ref.bookNumber ?? 0,
       2
     )}${formatNumber(ref.chapter, 3)}${formatNumber(
-      ref.verses[0],
+      reversedVerses[0],
       3
-    )}-${formatNumber(ref.bookNumber ?? 0, 2)}${formatNumber(
-      ref.chapter,
-      3
-    )}${formatNumber(reversedVerses[0], 3)}&pub=nwtsty`;
+    )}&pub=nwtsty`;
 
     itemHtml.push(
       [
