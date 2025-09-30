@@ -61,4 +61,5 @@ export function formatNumber(num: number, length: number = 2) {
 export const localeMap: Record<string, string> = {
   en: "E",
   no: "N",
+  es: "S",
 };

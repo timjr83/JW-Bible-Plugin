@@ -7,6 +7,7 @@ The language can be changed in options, you will find the JW Bible Plugin settin
 Post any questions for feature requests here: https://discourse.joplinapp.org/t/jw-bible-plugin/47291
 
 Release notes:
+1.1.3: Added Spanish language option.
 1.1.1: Added forum link as homepage for questions and requests.
 1.1.0: Added multi language support. First language added is Norwegian. Additional languages can be requested.
 1.0.15: Resolving bugs with scroll restore when resize web panel, improving parsing of bible references, reducing of setting the scroll postion to improve performance

@@ -1,17 +1,9 @@
 import { BibleReference, SupportedLang } from "./types";
 import { parseVerseRange } from "./utils";
-import { bibleBookMap, bookNumberMap } from "./bibleBooks";
+import { bibleBookMap, bookNumberMap, singleChapterBooks } from "./bibleBooks";
 
 const normalizeBookKey = (s: string) =>
   s.replace(/\./g, "").replace(/\s+/g, " ").trim().toLowerCase();
-
-const SINGLE_CHAPTER_BOOKS = new Set([
-  "Obadiah",
-  "Philemon",
-  "2 John",
-  "3 John",
-  "Jude",
-]);
 
 const RE_SPACE = /[\p{White_Space}\u200B]+/gu;
 
@@ -22,6 +14,7 @@ export function findBibleReferencesInText(
   if (!text) return [];
 
   // Get the correct maps for the chosen language
+  const SINGLE_CHAPTER_BOOKS = singleChapterBooks(language);
   const bbMap = bibleBookMap(language);
   const bbnMap = bookNumberMap(language);
 
@@ -80,12 +73,14 @@ export function findBibleReferencesInText(
     if (!bookMatch || !verseStr) continue;
 
     const normalisedBook = BOOK_LOOKUP[normalizeBookKey(bookMatch)];
+    console.log("normalised", normalisedBook);
     if (!normalisedBook || !SINGLE_CHAPTER_BOOKS.has(normalisedBook)) continue;
 
     const bookNumber = bbnMap[normalisedBook] ?? 0;
     const verses = parseVerseRange(verseStr);
 
     const uniqueKey = `${bookNumber}|1|${verses.join(",")}`;
+    console.log("uniqueKey", uniqueKey);
     if (seen.has(uniqueKey)) continue;
     seen.add(uniqueKey);
 
@@ -101,6 +96,7 @@ export function findBibleReferencesInText(
   }
 
   references.sort((a, b) => a.index - b.index);
+  console.log("references", references);
   return references;
 }
 

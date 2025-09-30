@@ -207,3 +207,11 @@ export const bookNumberMapNo: Record<string, number> = {
   Judas: 65,
   Åpenbaringen: 66,
 };
+
+export const singleChapterBooksNo: Set<string> = new Set([
+  "Obadja",
+  "Filemon",
+  "2. Johannes",
+  "3. Johannes",
+  "Judas",
+]);

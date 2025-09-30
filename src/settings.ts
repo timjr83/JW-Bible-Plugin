@@ -22,12 +22,12 @@ export async function registerSettings() {
       options: {
         en: "English",
         no: "Norwegian",
+        es: "Spanish",
       },
     },
   });
 }
 
 export async function getSelectedLanguage(): Promise<SupportedLang> {
-  const lang = await joplin.settings.value(LANG_KEY);
-  return lang === "no" ? "no" : "en";
+  return await joplin.settings.value(LANG_KEY);
 }

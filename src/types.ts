@@ -20,4 +20,4 @@ export interface BibleJSON {
   };
 }
 
-export type SupportedLang = "en" | "no";
+export type SupportedLang = "en" | "no" | "es";

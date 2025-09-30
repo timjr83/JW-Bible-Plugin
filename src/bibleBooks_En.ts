@@ -290,3 +290,12 @@ export const bookNumberMapEn: Record<string, number> = {
   Jude: 65,
   Revelation: 66,
 };
+
+// Fix: Set type for singleChapterBooks should be Set<string>
+export const singleChapterBooksEn: Set<string> = new Set([
+  "Obadiah",
+  "Philemon",
+  "2 John",
+  "3 John",
+  "Jude",
+]);
