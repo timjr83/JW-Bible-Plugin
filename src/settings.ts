@@ -23,6 +23,8 @@ export async function registerSettings() {
         en: "English",
         no: "Norwegian",
         es: "Spanish",
+        pt: "Portuguese",
+        de: "German",
       },
     },
   });

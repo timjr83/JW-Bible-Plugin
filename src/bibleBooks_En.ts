@@ -55,6 +55,7 @@ export const bibleBookMapEn: Record<string, string> = {
   Ecc: "Ecclesiastes",
   "Song of Solomon": "Song of Solomon",
   So: "Song of Solomon",
+  Ca: "Song of Solomon",
   Isaiah: "Isaiah",
   Isa: "Isaiah",
   Is: "Isaiah",

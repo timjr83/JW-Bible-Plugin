@@ -15,6 +15,16 @@ import {
   bookNumberMapEs,
   singleChapterBooksEs,
 } from "./bibleBooks_Es";
+import {
+  bibleBookMapPt,
+  bookNumberMapPt,
+  singleChapterBooksPt,
+} from "./bibleBooks_Pt";
+import {
+  bibleBookMapDe,
+  bookNumberMapDe,
+  singleChapterBooksDe,
+} from "./bibleBooks_De";
 import { SupportedLang } from "./types";
 
 export function singleChapterBooks(lang: SupportedLang) {
@@ -25,6 +35,10 @@ export function singleChapterBooks(lang: SupportedLang) {
       return singleChapterBooksNo as Set<string>;
     case "es":
       return singleChapterBooksEs as Set<string>;
+    case "pt":
+      return singleChapterBooksPt as Set<string>;
+    case "de":
+      return singleChapterBooksDe as Set<string>;
     default:
       return singleChapterBooksEn as Set<string>;
   }
@@ -38,6 +52,10 @@ export function bibleBookMap(lang: SupportedLang) {
       return bibleBookMapNo as Record<string, string>;
     case "es":
       return bibleBookMapEs as Record<string, string>;
+    case "pt":
+      return bibleBookMapPt as Record<string, string>;
+    case "de":
+      return bibleBookMapDe as Record<string, string>;
     default:
       return bibleBookMapEn as Record<string, string>;
   }
@@ -51,6 +69,10 @@ export function bookNumberMap(lang: SupportedLang) {
       return bookNumberMapNo as Record<string, number>;
     case "es":
       return bookNumberMapEs as Record<string, number>;
+    case "pt":
+      return bookNumberMapPt as Record<string, number>;
+    case "de":
+      return bookNumberMapDe as Record<string, number>;
     default:
       return bookNumberMapEn as Record<string, number>;
   }
