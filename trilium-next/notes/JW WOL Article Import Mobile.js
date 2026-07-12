@@ -408,6 +408,19 @@ class JWWolArticleImportMobile {
             }
         }
 
+        if (parsed.hostname === "wol.jw.org") {
+            const wolShorthandRangeMatch = String(parsed.hash || "").match(/^#h=(\d+)-(\d+)$/iu);
+            if (wolShorthandRangeMatch) {
+                const startPid = Number(wolShorthandRangeMatch[1]);
+                const endPid = Number(wolShorthandRangeMatch[2]);
+                if (Number.isFinite(startPid) && Number.isFinite(endPid)) {
+                    const normalizedStartPid = Math.min(startPid, endPid);
+                    const normalizedEndPid = Math.max(startPid, endPid);
+                    parsed.hash = `#h=${normalizedStartPid}:0-${normalizedEndPid}:0`;
+                }
+            }
+        }
+
         if (!/^https?:$/i.test(parsed.protocol) || !SUPPORTED_IMPORT_HOSTS.has(parsed.hostname)) {
             return null;
         }
@@ -797,6 +810,27 @@ class JWWolArticleImportMobile {
                                 .join(", ");
                         }
 
+                        function applyHighlightRangeToUrl(value, highlightRange, baseUrl) {
+                            const trimmedUrl = String(value || "").trim();
+                            const trimmedRange = String(highlightRange || "").trim();
+                            if (!trimmedUrl) {
+                                return trimmedUrl;
+                            }
+
+                            const absoluteUrl = toAbsoluteUrl(trimmedUrl, baseUrl);
+                            if (!trimmedRange) {
+                                return absoluteUrl;
+                            }
+
+                            try {
+                                const parsed = new URL(absoluteUrl);
+                                parsed.hash = trimmedRange.startsWith("#") ? trimmedRange : `#${trimmedRange}`;
+                                return parsed.toString();
+                            } catch (error) {
+                                return absoluteUrl;
+                            }
+                        }
+
                         function cleanupSelectorList(shouldIncludeImages) {
                             return [
                                 "script",
@@ -1102,9 +1136,13 @@ class JWWolArticleImportMobile {
                                     }
                                 }
 
+                                const highlightRange = element.getAttribute && element.getAttribute("data-highlightrange");
                                 const href = element.getAttribute && element.getAttribute("href");
-                                if (href) {
-                                    element.setAttribute("href", toAbsoluteUrl(href, baseUrl));
+                                const savedHref = element.getAttribute && element.getAttribute("data-cke-saved-href");
+                                const normalizedHref = applyHighlightRangeToUrl(href || savedHref, highlightRange, baseUrl);
+                                if (normalizedHref) {
+                                    element.setAttribute("href", normalizedHref);
+                                    element.setAttribute("data-cke-saved-href", normalizedHref);
                                 }
 
                                 const src = element.getAttribute && element.getAttribute("src");
@@ -1437,6 +1475,18 @@ function parseHighlightedRangeFromUrlString(urlString) {
             }
         }
 
+        const hashWolShorthandRangeMatch = hash.match(/^#h=(\d+)-(\d+)$/iu);
+        if (hashWolShorthandRangeMatch) {
+            const startPid = Number(hashWolShorthandRangeMatch[1]);
+            const endPid = Number(hashWolShorthandRangeMatch[2]);
+            if (Number.isFinite(startPid) && Number.isFinite(endPid)) {
+                return {
+                    startPid: Math.min(startPid, endPid),
+                    endPid: Math.max(startPid, endPid)
+                };
+            }
+        }
+
         const hashWolSingleMatch = hash.match(/^#h=(\d+)$/iu);
         if (hashWolSingleMatch) {
             const paragraphId = Number(hashWolSingleMatch[1]);
@@ -1490,6 +1540,18 @@ function parseHighlightedRangeFromUrlString(urlString) {
     if (wolRangeMatch) {
         const startPid = Number(wolRangeMatch[1]);
         const endPid = Number(wolRangeMatch[2]);
+        if (Number.isFinite(startPid) && Number.isFinite(endPid)) {
+            return {
+                startPid: Math.min(startPid, endPid),
+                endPid: Math.max(startPid, endPid)
+            };
+        }
+    }
+
+    const wolShorthandRangeMatch = normalizedUrl.match(/(?:^|[#?&])h=(\d+)-(\d+)(?:$|[&#])/iu);
+    if (wolShorthandRangeMatch) {
+        const startPid = Number(wolShorthandRangeMatch[1]);
+        const endPid = Number(wolShorthandRangeMatch[2]);
         if (Number.isFinite(startPid) && Number.isFinite(endPid)) {
             return {
                 startPid: Math.min(startPid, endPid),
@@ -1592,7 +1654,6 @@ function isBibleReferenceAnchor(anchor) {
             anchor.classList.contains("jsBibleLink")
             || anchor.hasAttribute("data-bible")
             || anchor.hasAttribute("data-targetverses")
-            || anchor.hasAttribute("data-jw-ref-id")
             || hrefLooksLikeBibleReference(anchor.getAttribute("href"))
             || hrefLooksLikeBibleReference(anchor.getAttribute("data-cke-saved-href"))
         )
@@ -1600,6 +1661,8 @@ function isBibleReferenceAnchor(anchor) {
 }
 
 function isBiblePluginAnchor(anchor) {
+    const href = String(anchor instanceof Element ? anchor.getAttribute("href") || "" : "");
+    const savedHref = String(anchor instanceof Element ? anchor.getAttribute("data-cke-saved-href") || "" : "");
     return Boolean(
         anchor instanceof Element
         && (
@@ -1607,7 +1670,14 @@ function isBiblePluginAnchor(anchor) {
             || anchor.classList.contains("reference-link")
             || anchor.hasAttribute("data-reference")
             || anchor.hasAttribute("data-jw-ref-link")
-            || /^#jw-ref-/iu.test(String(anchor.getAttribute("href") || ""))
+            || /^#jw-ref-/iu.test(href)
+            || (
+                anchor.hasAttribute("data-jw-ref-id")
+                && (
+                    hrefLooksLikeBibleReference(href)
+                    || hrefLooksLikeBibleReference(savedHref)
+                )
+            )
         )
     );
 }

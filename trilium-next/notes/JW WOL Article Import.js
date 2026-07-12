@@ -495,6 +495,19 @@ class JWWolArticleImportToolbar extends api.NoteContextAwareWidget {
             }
         }
 
+        if (parsed.hostname === "wol.jw.org") {
+            const wolShorthandRangeMatch = String(parsed.hash || "").match(/^#h=(\d+)-(\d+)$/iu);
+            if (wolShorthandRangeMatch) {
+                const startPid = Number(wolShorthandRangeMatch[1]);
+                const endPid = Number(wolShorthandRangeMatch[2]);
+                if (Number.isFinite(startPid) && Number.isFinite(endPid)) {
+                    const normalizedStartPid = Math.min(startPid, endPid);
+                    const normalizedEndPid = Math.max(startPid, endPid);
+                    parsed.hash = `#h=${normalizedStartPid}:0-${normalizedEndPid}:0`;
+                }
+            }
+        }
+
         if (!/^https?:$/i.test(parsed.protocol) || !SUPPORTED_IMPORT_HOSTS.has(parsed.hostname)) {
             return null;
         }
@@ -1050,7 +1063,6 @@ class JWWolArticleImportToolbar extends api.NoteContextAwareWidget {
                                 (element.classList && element.classList.contains("jsBibleLink"))
                                 || element.hasAttribute("data-bible")
                                 || element.hasAttribute("data-targetverses")
-                                || element.hasAttribute("data-jw-ref-id")
                                 || hrefLooksLikeBibleReference(element.getAttribute("href"))
                                 || hrefLooksLikeBibleReference(element.getAttribute("data-cke-saved-href"))
                             );
@@ -1517,13 +1529,11 @@ class JWWolArticleImportToolbar extends api.NoteContextAwareWidget {
 
                                 const highlightRange = element.getAttribute && element.getAttribute("data-highlightrange");
                                 const href = element.getAttribute && element.getAttribute("href");
-                                if (href) {
-                                    element.setAttribute("href", applyHighlightRangeToUrl(href, highlightRange, baseUrl));
-                                }
-
                                 const savedHref = element.getAttribute && element.getAttribute("data-cke-saved-href");
-                                if (savedHref) {
-                                    element.setAttribute("data-cke-saved-href", applyHighlightRangeToUrl(savedHref, highlightRange, baseUrl));
+                                const normalizedHref = applyHighlightRangeToUrl(href || savedHref, highlightRange, baseUrl);
+                                if (normalizedHref) {
+                                    element.setAttribute("href", normalizedHref);
+                                    element.setAttribute("data-cke-saved-href", normalizedHref);
                                 }
 
                                 const src = element.getAttribute && element.getAttribute("src");
@@ -1811,13 +1821,11 @@ class JWWolArticleImportToolbar extends api.NoteContextAwareWidget {
 
                                 const highlightRange = $(element).attr("data-highlightrange");
                                 const href = $(element).attr("href");
-                                if (href) {
-                                    $(element).attr("href", applyHighlightRangeToUrl(href, highlightRange, baseUrl));
-                                }
-
                                 const savedHref = $(element).attr("data-cke-saved-href");
-                                if (savedHref) {
-                                    $(element).attr("data-cke-saved-href", applyHighlightRangeToUrl(savedHref, highlightRange, baseUrl));
+                                const normalizedHref = applyHighlightRangeToUrl(href || savedHref, highlightRange, baseUrl);
+                                if (normalizedHref) {
+                                    $(element).attr("href", normalizedHref);
+                                    $(element).attr("data-cke-saved-href", normalizedHref);
                                 }
 
                                 const src = $(element).attr("src");
@@ -1846,7 +1854,7 @@ class JWWolArticleImportToolbar extends api.NoteContextAwareWidget {
                             $container.find("a[href], a[data-cke-saved-href]").each((index, element) => {
                                 const isBibleReferenceLink = (
                                     $(element).hasClass("jsBibleLink")
-                                    || $(element).is("[data-bible], [data-targetverses], [data-jw-ref-id]")
+                                    || $(element).is("[data-bible], [data-targetverses]")
                                     || hrefLooksLikeBibleReference($(element).attr("href"))
                                     || hrefLooksLikeBibleReference($(element).attr("data-cke-saved-href"))
                                 );
@@ -2068,6 +2076,18 @@ function parseHighlightedRangeFromUrlString(urlString) {
         }
     }
 
+    const wolShorthandRangeMatch = normalizedUrl.match(/(?:^|[#?&])h=(\d+)-(\d+)(?:$|[&#])/iu);
+    if (wolShorthandRangeMatch) {
+        const startPid = Number(wolShorthandRangeMatch[1]);
+        const endPid = Number(wolShorthandRangeMatch[2]);
+        if (Number.isFinite(startPid) && Number.isFinite(endPid)) {
+            return {
+                startPid: Math.min(startPid, endPid),
+                endPid: Math.max(startPid, endPid)
+            };
+        }
+    }
+
     const wolSingleMatch = normalizedUrl.match(/(?:^|[#?&])h=(\d+)(?:$|[&#])/iu);
     if (wolSingleMatch) {
         const paragraphId = Number(wolSingleMatch[1]);
@@ -2169,12 +2189,20 @@ function isBibleReferenceAnchor(anchor) {
 }
 
 function isBiblePluginAnchor(anchor) {
+    const href = String(anchor instanceof Element ? anchor.getAttribute("href") || "" : "");
+    const savedHref = String(anchor instanceof Element ? anchor.getAttribute("data-cke-saved-href") || "" : "");
     return Boolean(
         anchor instanceof Element
         && (
-            anchor.hasAttribute("data-jw-ref-id")
-            || /(?:#jw-ref-|jwbible:jw-ref-)/iu.test(String(anchor.getAttribute("href") || ""))
-            || /(?:#jw-ref-|jwbible:jw-ref-)/iu.test(String(anchor.getAttribute("data-cke-saved-href") || ""))
+            /(?:#jw-ref-|jwbible:jw-ref-)/iu.test(href)
+            || /(?:#jw-ref-|jwbible:jw-ref-)/iu.test(savedHref)
+            || (
+                anchor.hasAttribute("data-jw-ref-id")
+                && (
+                    hrefLooksLikeBibleReference(href)
+                    || hrefLooksLikeBibleReference(savedHref)
+                )
+            )
         )
     );
 }
